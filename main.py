@@ -40,7 +40,7 @@ print("SUCCESS") if updater!=0 else print("FAIL")
 
 # Initialization of the Google Calendar API
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 creds = None
 
 if os.path.exists('token.json'):
