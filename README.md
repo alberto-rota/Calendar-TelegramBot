@@ -1,4 +1,4 @@
-# Calendar-TelegramBot
+# Calendar-TelegramBot: WORK IN PROGRESS
 A Telegram Bot managing your events in Google Calendar: this Bot allows to view, edit, create and delete events in a simple interface from the Telegram chat. It also supports Tasks, that can be added, edited and modified from a similar interface and that will be notified to the user until selected as completed.
 Moreover, it provides notifications for your events as specified in your Google calendar.
 
