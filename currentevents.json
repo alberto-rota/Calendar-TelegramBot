@@ -1,0 +1,149 @@
+[
+    {
+        "summary": "Ghent",
+        "description": null,
+        "start": {
+            "date": "18/06/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "19/06/2022",
+            "time": "All Day"
+        },
+        "colorId": "7"
+    },
+    {
+        "summary": "Flight to Milan (FR 4526)",
+        "description": "Per visualizzare informazioni dettagliate sugli eventi creati automaticamente come questo, utilizza l'app Google Calendar ufficiale. https://g.co/calendar\n\nQuesto evento \u00e8 stato creato a partire da un'email che hai ricevuto in Gmail. https://mail.google.com/mail?extsrc=cal&plid=ACUX6DN3riYl3l_8PJ9ApquWg3Xj0VvtsvqTtu8\n",
+        "start": {
+            "timeZone": "Europe/Rome",
+            "date": "21/06/2022",
+            "time": "11:50"
+        },
+        "end": {
+            "timeZone": "Europe/Rome",
+            "date": "21/06/2022",
+            "time": "13:25"
+        },
+        "colorId": "6"
+    },
+    {
+        "summary": "Meeting NearLab - Ke",
+        "description": null,
+        "start": {
+            "date": "22/06/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "23/06/2022",
+            "time": "All Day"
+        },
+        "colorId": "3"
+    },
+    {
+        "summary": "Neuroengineering Exam 1st call",
+        "description": null,
+        "start": {
+            "date": "30/06/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "01/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "9"
+    },
+    {
+        "summary": "Esame MAM Ventu",
+        "description": null,
+        "start": {
+            "timeZone": "Europe/Brussels",
+            "date": "30/06/2022",
+            "time": "10:00"
+        },
+        "end": {
+            "timeZone": "Europe/Brussels",
+            "date": "30/06/2022",
+            "time": "12:00"
+        },
+        "colorId": "3"
+    },
+    {
+        "summary": "Computational Biomechanics Exam 1st call",
+        "description": null,
+        "start": {
+            "date": "01/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "02/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "4"
+    },
+    {
+        "summary": "Eliminazione Instagram",
+        "description": null,
+        "start": {
+            "date": "05/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "06/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "3"
+    },
+    {
+        "summary": "Computational Biomechanics Exam 2nd call",
+        "description": null,
+        "start": {
+            "date": "18/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "19/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "4"
+    },
+    {
+        "summary": "Laurea Ventu",
+        "description": "Laurea di Nicola Venturini",
+        "start": {
+            "date": "20/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "21/07/2022",
+            "time": "All Day"
+        },
+        "colorId": null
+    },
+    {
+        "summary": "Neuroengineering Exam 2nd call",
+        "description": null,
+        "start": {
+            "date": "21/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "22/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "9"
+    },
+    {
+        "summary": "Biosensors Exam 2nd call",
+        "description": null,
+        "start": {
+            "date": "26/07/2022",
+            "time": "All Day"
+        },
+        "end": {
+            "date": "27/07/2022",
+            "time": "All Day"
+        },
+        "colorId": "2"
+    }
+]
