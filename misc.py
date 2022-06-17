@@ -32,7 +32,7 @@ def menu(update, context):
         " MENU request ")
     
     menu_options = [
-        ['Events','Tasks']
+        ['📅Events','✅Tasks']
     ]
 
     update.message.reply_text(

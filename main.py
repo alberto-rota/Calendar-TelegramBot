@@ -71,24 +71,27 @@ conv_handler = ConversationHandler(
         states={
             MENU: 
                 [
-                MessageHandler(Filters.regex('^(Events)$'), calendarevents.show_callback),
-                MessageHandler(Filters.regex('^(Tasks)$'), calendartasks.tasks_callback),
-                MessageHandler(Filters.text & ~Filters.command, calendarevents.new_callback),
+                MessageHandler(Filters.regex('^(📅Events)$'), calendarevents.show),
+                MessageHandler(Filters.regex('^(✅Tasks)$'), calendartasks.tasks_callback),
+                MessageHandler(Filters.regex('^(🆕Add Event)$'), calendarevents.new),
+                MessageHandler(Filters.regex('^(♻️Modify Event)$'), calendarevents.modify),
+                MessageHandler(Filters.regex('^(💣Delete Event)$'), calendarevents.delete),
+                CallbackQueryHandler(calendarevents.query)
                 ],
             NEW_EVENT:
                 [
-                MessageHandler(Filters.text & ~Filters.command, calendarevents.add_callback),
+                MessageHandler(Filters.text & ~Filters.command, calendarevents.add),
                 ],
             NEW_EVENT_FINAL:
                 [
-                MessageHandler(Filters.text & ~Filters.command, calendarevents.finalize_callback),
+                CallbackQueryHandler(calendarevents.query)
                 ]
         },
         fallbacks=[CommandHandler('menu', misc.menu)]
 )
 dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CommandHandler('menu', misc.menu))
-dispatcher.add_handler(CallbackQueryHandler(calendarevents.add_callback))
+# dispatcher.add_handler(CallbackQueryHandler(calendarevents.query))
 
 updater.start_polling()
 updater.idle()
