@@ -29,7 +29,7 @@ def save(events):
     
 # Generates a blanck empty event
 def blankevent():
-    return {'summary': '','description': '',
+    return {'summary': '',
             'start': {'date':'','time':''},'end': {'date':'','time':''},
             'colorId': ''}
 
@@ -50,6 +50,7 @@ def fetch(creds):
         return None
         
     # Standardizes the event data starting and ending date and time
+
     for k,e in enumerate(events):
         if 'date' in e['start'].keys():
             events[k]['start']['date'] = datetime.datetime.strptime(events[k]['start']['date'],"%Y-%m-%d")
@@ -141,7 +142,7 @@ def add(update, context):
             event['end']['date']   = eventtext[2] if eventtext[2]!="." else event['start']['date']
             event['end']['time']   = eventtext[3] if eventtext[3]!="." else 'All Day'
             event['summary']       = eventtext[4] if eventtext[4]!="." else 'NoNameEvent'
-            event['description']   = eventtext[5] if eventtext[5]!="." else ''
+            event['description']   = eventtext[5] if eventtext[5]!="." else None
         except IndexError:
             misc.logln("Error in adding the event",update.effective_chat.id)
             context.bot.send_message(
@@ -214,6 +215,24 @@ def finalize(update, context):
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
             
+    # Converts datetime into proper format Google-compatible
+    if event['start']['time'] == 'All Day':
+        event['start']['date'] = datetime.datetime.strptime(event['start']['date'],"%d/%m/%Y")
+        event['end']['date']   = datetime.datetime.strptime(event['end']['date'],"%d/%m/%Y")
+        event['start']['date'] = event['start']['date'].strftime("%Y-%m-%d")
+        event['end']['date']   = event['end']['date'].strftime("%Y-%m-%d")
+        
+    else:   
+        event['start']['dateTime'] = datetime.datetime.strptime(event['start']['date']+"T"+event['start']['time'],"%d/%m/%YT%H:%M")
+        event['end']['dateTime']   = datetime.datetime.strptime(event['end']['date']+"T"+event['end']['time'],"%d/%m/%YT%H:%M")
+        event['start']['dateTime'] = event['start']['dateTime'].strftime("%Y-%s-%dT%H:%M")
+        event['end']['dateTime']   = event['end']['dateTime'].strftime("%Y-%m-%dT%H:%M")
+        event['start']['timeZone'] = TIMEZONE
+        event['end']['timeZone'] = TIMEZONE
+    
+    event['start'].pop("time")
+    event['end'].pop("time")
+        
     service = build('calendar', 'v3', credentials=creds)
     event = service.events().insert(calendarId='primary', body=event).execute()
     return MENU
@@ -224,7 +243,7 @@ def query(update, context):
         new(update,context)
         return NEW_EVENT
     elif query == "modifyevent": 
-        modify(update,context)
+        # modify(update,context)
         return NEW_EVENT
     elif query == "deleteevent": 
         delete(update,context)

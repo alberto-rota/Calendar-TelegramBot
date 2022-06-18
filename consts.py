@@ -10,6 +10,7 @@ NEW_EVENT_FINAL = 2
 LINEWIDTH = 36
 BT = "`"
 SEP = "_"
+TIMEZONE = "Europe/Berlin"
 
 
 color = {
