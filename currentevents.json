@@ -1,20 +1,5 @@
 [
     {
-        "summary": "Mail International Office",
-        "description": null,
-        "start": {
-            "timeZone": "Europe/Brussels",
-            "date": "19/06/2022",
-            "time": "13:30"
-        },
-        "end": {
-            "timeZone": "Europe/Brussels",
-            "date": "19/06/2022",
-            "time": "15:30"
-        },
-        "colorId": null
-    },
-    {
         "summary": "Evento Random",
         "description": "Descrizione di un evento del cazzo a cui devo partecipare",
         "start": {

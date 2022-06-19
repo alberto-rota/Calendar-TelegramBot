@@ -76,7 +76,7 @@ conv_handler = ConversationHandler(
                 MessageHandler(Filters.regex('^(🆕Add Event)$'), calendarevents.new),
                 MessageHandler(Filters.regex('^(♻️Modify Event)$'), calendarevents.modify),
                 MessageHandler(Filters.regex('^(💣Delete Event)$'), calendarevents.delete),
-                CallbackQueryHandler(calendarevents.query)
+                CallbackQueryHandler(calendarevents.addquery)
                 ],
             NEW_EVENT:
                 [
@@ -84,7 +84,15 @@ conv_handler = ConversationHandler(
                 ],
             NEW_EVENT_FINAL:
                 [
-                CallbackQueryHandler(calendarevents.query)
+                CallbackQueryHandler(calendarevents.modifyquery)
+                ],
+            MODIFY_EVENT:
+                [
+                CallbackQueryHandler(calendarevents.modifyquery),
+                ],
+            MODIFY_EVENT_FINAL:
+                [
+                MessageHandler(Filters.text & ~Filters.command, calendarevents.modifyfinal),
                 ]
         },
         fallbacks=[CommandHandler('menu', misc.menu)]

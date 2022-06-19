@@ -102,40 +102,69 @@ def fetch(creds):
     save(events)
     return events
 
-
-def modifychosen(update, context):
-    return
-
-
 def modify(update, context):
+    misc.log("MODIFY EVENT REQUEST")
     events = load()
     events_keyboard = []
     for e in events:
         events_keyboard.append(
-            [InlineKeyboardButton(color[e['colorId']]+" "+e['summary'], callback_data=modifychosen)]
+            [InlineKeyboardButton(color[e['colorId']]+" "+e['summary'], callback_data=e['summary'])]
         )
         
-        update.message.reply_text(
-            "Which event do you want to modify?",
-            parse_mode=telegram.ParseMode.MARKDOWN,
-        )
-    return MENU
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, 
+        text="Which event do you want to modify?",
+        parse_mode=telegram.ParseMode.MARKDOWN,
+        reply_markup=InlineKeyboardMarkup(events_keyboard)
+    )
+    return MODIFY_EVENT
+
+def modifyquery(update, context):
+    query = update.callback_query.data
+    events = load()
+    for e in events:
+        if e['summary'] == query:
+            targetevent = e
+    params_keyboard = [
+        [InlineKeyboardButton(targetevent['summary'], callback_data=targetevent['summary'])],
+        [InlineKeyboardButton(targetevent['description'][:50] if targetevent['description'] is not None else "Description", callback_data=targetevent['description'][:100] if targetevent['description'] is not None else "Description")],
+        [
+            InlineKeyboardButton(targetevent['start']['date'], callback_data=targetevent['start']['date']),
+            InlineKeyboardButton("▶️"+targetevent['end']['date'], callback_data=targetevent['end']['date']),
+        ],
+        [
+            InlineKeyboardButton(targetevent['start']['time'], callback_data=targetevent['start']['time']),
+            InlineKeyboardButton("▶️"+targetevent['end']['time'], callback_data=targetevent['end']['time']),
+        ],
+    ]
+        
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, 
+        text="Which parameter you want to modify?",
+        parse_mode=telegram.ParseMode.MARKDOWN,
+        reply_markup=InlineKeyboardMarkup(params_keyboard)
+    )
+    return MODIFY_EVENT_FINAL
+    
+def modifyfinal(update, context):
+    pass
 
 def delete(update, context):
-    events_keyboard = []
-    events = load()
-    for e in events:
-        events_keyboard.append(
-            [InlineKeyboardButton(color[e['colorId']]+" "+e['summary'], callback_data=modifychosen)]
-        )
+    # events_keyboard = []
+    # events = load()
+    # for e in events:
+    #     events_keyboard.append(
+    #         [InlineKeyboardButton(color[e['colorId']]+" "+e['summary'], callback_data=modifychosen)]
+    #     )
         
-        update.message.reply_text(
-            "Which event do you want to delete?",
-            parse_mode=telegram.ParseMode.MARKDOWN,
-        )
+    #     update.message.reply_text(
+    #         "Which event do you want to delete?",
+    #         parse_mode=telegram.ParseMode.MARKDOWN,
+    #     )
     return MENU
 
 def new(update,context):
+    misc.log("NEW EVENT REQUEST")
     context.bot.send_message(
         chat_id=update.effective_chat.id, 
         text="Type the details of the event you want to create:\n"+
@@ -273,17 +302,17 @@ def finalize(update, context):
         
     return MENU
     
-def query(update, context):
+def addquery(update, context):
     query = update.callback_query.data
     if query == "newevent": 
         new(update,context)
         return NEW_EVENT
     elif query == "modifyevent": 
-        # modify(update,context)
-        return NEW_EVENT
+        modify(update,context)
+        return MODIFY_EVENT
     elif query == "deleteevent": 
         delete(update,context)
-        return NEW_EVENT
+        return DELETE_EVENT
     else: # No explicit parameter means that the query content is one of the color
         finalize(update,context)
         return MENU
