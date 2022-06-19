@@ -5,6 +5,8 @@ from consts import *
 # Python Modules
 import datetime
 import json
+import copy
+import os
 
 # Google Calendar API Modules
 from googleapiclient.discovery import build
@@ -19,8 +21,27 @@ import telegram
 
 # Loads the events from the local JSON
 def load():
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
+    creds = None
+
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+    fetch(creds)
     with open('currentevents.json', 'r') as f:
         return json.load(f)
+    
 # Saves the events from the local JSON
 def save(events):
     eventsjson = json.dumps(events, indent = 4)
@@ -140,7 +161,7 @@ def add(update, context):
             event['start']['date'] = eventtext[0] if eventtext[0]!="." else (datetime.datetime.now()+datetime.timedelta(days=1)).strftime("%d/%m/%Y")
             event['start']['time'] = eventtext[1] if eventtext[1]!="." else 'All Day'
             event['end']['date']   = eventtext[2] if eventtext[2]!="." else event['start']['date']
-            event['end']['time']   = eventtext[3] if eventtext[3]!="." else 'All Day'
+            event['end']['time']   = eventtext[3] if eventtext[3]!="." else event['start']['time']
             event['summary']       = eventtext[4] if eventtext[4]!="." else 'NoNameEvent'
             event['description']   = eventtext[5] if eventtext[5]!="." else None
         except IndexError:
@@ -190,17 +211,9 @@ def add(update, context):
         
         
 def finalize(update, context):
-    events = load()
     global event
     event['colorId'] = colorcode[update.callback_query.data]
-    events.append((event))
-    misc.log("Event added: "+event['summary'])
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, 
-        text="*NEW EVENT ADDED*\n\n"+print(event),
-        parse_mode=telegram.ParseMode.MARKDOWN,
-    )
-    save(events)
+    printableevent = copy.deepcopy(event)
     SCOPES = ['https://www.googleapis.com/auth/calendar']
 
     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
@@ -214,7 +227,6 @@ def finalize(update, context):
             creds = flow.run_local_server(port=0)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-            
     # Converts datetime into proper format Google-compatible
     if event['start']['time'] == 'All Day':
         event['start']['date'] = datetime.datetime.strptime(event['start']['date'],"%d/%m/%Y")
@@ -225,16 +237,40 @@ def finalize(update, context):
     else:   
         event['start']['dateTime'] = datetime.datetime.strptime(event['start']['date']+"T"+event['start']['time'],"%d/%m/%YT%H:%M")
         event['end']['dateTime']   = datetime.datetime.strptime(event['end']['date']+"T"+event['end']['time'],"%d/%m/%YT%H:%M")
-        event['start']['dateTime'] = event['start']['dateTime'].strftime("%Y-%s-%dT%H:%M")
-        event['end']['dateTime']   = event['end']['dateTime'].strftime("%Y-%m-%dT%H:%M")
+        event['start']['dateTime'] = event['start']['dateTime'].strftime("%Y-%m-%dT%H:%M")+":00"
+        event['end']['dateTime']   = event['end']['dateTime'].strftime("%Y-%m-%dT%H:%M")+":00"
         event['start']['timeZone'] = TIMEZONE
         event['end']['timeZone'] = TIMEZONE
+        
+        event['start'].pop("date")
+        event['end'].pop("date")
     
     event['start'].pop("time")
     event['end'].pop("time")
         
     service = build('calendar', 'v3', credentials=creds)
-    event = service.events().insert(calendarId='primary', body=event).execute()
+    try:
+        event = service.events().insert(calendarId='primary', body=event).execute()
+    except:
+        misc.log("Error in adding event: "+event['summary'])
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, 
+            text="*There was an error while adding this event. Try again! 😥*\n\n"+print(printableevent),
+            parse_mode=telegram.ParseMode.MARKDOWN,
+        )
+    else:    
+        misc.log("Event added: "+event['summary'])
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, 
+            text="*⬇️ NEW EVENT ADDED ⬇️*",
+            parse_mode=telegram.ParseMode.MARKDOWN,
+        )
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, 
+            text=print(printableevent),
+            parse_mode=telegram.ParseMode.MARKDOWN,
+        )
+        
     return MENU
     
 def query(update, context):
@@ -278,25 +314,27 @@ def show(update, context):
     
 # Produces a string of text sendable to the user
 def print(e):
+    msg_text = "📍 *"+e['summary'].upper()+"*\n\n"
+    
     # One day events
     if e['start']['date'] == e['end']['date']:
         
         # All day events
         if e['start']['time'] == "All Day":
-            msg_text = "*"+e['start']['date']+" ➡️ All Day*\n"
+            msg_text+= color[e['colorId']]+"    📅* "+e['start']['date']+"*\n"
         else:
-            msg_text = "*"+e['start']['date']+"*-_"+e['start']['time']+"_ ➡️ *"+ e['end']['date']+"*-_"+e['end']['time']+"_\n"
+            msg_text+= color[e['colorId']]+"    📅* "+e['start']['date']+"*\n"
+            msg_text+= color[e['colorId']]+"    🕒_ "+e['start']['time']+"_   ➡️   _"+ e['end']['time']+"_\n\n"
             
     # Multiple day events
     else:
-        msg_text = "*"+e['start']['date']+" ➡️ "+ e['end']['date']+"*\n"
+        msg_text+= color[e['colorId']]+"    📅* "+e['start']['date']+"*   ➡️   *"+ e['end']['date']+"*\n"
+        msg_text+= color[e['colorId']]+"    🕒_ "+e['start']['time']+"_   ➡️   _"+ e['end']['time']+"_\n\n"
         
-    msg_text += color[e.get("colorId")]+" "+e['summary']+"\n\n"
-    
     # Automatically generated descriptions may contain links with characters that conflic with themarkdown syntax
     try: 
         if e.get("description") is not None: 
-            msg_text += "_"+e.get('description')[:100]+"_"
+            msg_text+= "✏️_ "+e.get('description')[:100]+"_"
             if len(e.get("description"))>=100: msg_text += "_... [more]_"
     except e:
         msg_text += "_Description is not renderable_"

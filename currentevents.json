@@ -1,31 +1,33 @@
 [
     {
-        "summary": "Ghent",
+        "summary": "Mail International Office",
         "description": null,
         "start": {
-            "date": "18/06/2022",
-            "time": "All Day"
-        },
-        "end": {
+            "timeZone": "Europe/Brussels",
             "date": "19/06/2022",
-            "time": "All Day"
-        },
-        "colorId": "7"
-    },
-    {
-        "summary": "Template Event",
-        "description": "The description of a template event",
-        "start": {
-            "timeZone": "America/Los_Angeles",
-            "date": "20/06/2022",
-            "time": "18:00"
+            "time": "13:30"
         },
         "end": {
-            "timeZone": "America/Los_Angeles",
-            "date": "21/06/2022",
-            "time": "02:00"
+            "timeZone": "Europe/Brussels",
+            "date": "19/06/2022",
+            "time": "15:30"
         },
         "colorId": null
+    },
+    {
+        "summary": "Evento Random",
+        "description": "Descrizione di un evento del cazzo a cui devo partecipare",
+        "start": {
+            "timeZone": "Europe/Berlin",
+            "date": "20/06/2022",
+            "time": "14:45"
+        },
+        "end": {
+            "timeZone": "Europe/Berlin",
+            "date": "21/06/2022",
+            "time": "14:45"
+        },
+        "colorId": "3"
     },
     {
         "summary": "Flight to Milan (FR 4526)",
